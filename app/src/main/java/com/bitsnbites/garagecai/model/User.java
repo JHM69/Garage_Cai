@@ -1,8 +1,13 @@
 package com.bitsnbites.garagecai.model;
 
-public class User {
+import androidx.annotation.NonNull;
+
+import java.io.Serializable;
+
+public class User implements Serializable {
     String uuid;
     String email;
+    String name;
     Boolean emailVerified;
     String number;
     String photoUrl;
@@ -13,9 +18,10 @@ public class User {
     String nidVerified;
     long timestamp;
 
-    public User(String uuid, String email, Boolean emailVerified, String number, String photoUrl, String birthCertificate, Boolean birthCertificateVerified, String nid, String nidVerified, long timestamp) {
+    public User(String uuid, String email, String name, Boolean emailVerified, String number, String photoUrl, String birthCertificate, Boolean birthCertificateVerified, String nid, String nidVerified, long timestamp) {
         this.uuid = uuid;
         this.email = email;
+        this.name = name;
         this.emailVerified = emailVerified;
         this.number = number;
         this.photoUrl = photoUrl;
@@ -31,6 +37,14 @@ public class User {
 
     public String getUuid() {
         return uuid;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public void setUuid(String uuid) {

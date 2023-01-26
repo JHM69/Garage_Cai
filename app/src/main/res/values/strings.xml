@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Judges\' Platform BD</string>
+    <string name="app_name">Garage Chai</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="log_in">Log in</string>
     <string name="ail_com">To verify, Please type your email and mobile number.</string>
@@ -8,12 +8,6 @@
     <string name="mobile_number">Mobile Number</string>
     <string name="verify">Next</string>
     <string name="email">Email</string>
-
-
-    <!-- Preferen  Judges\' Platform BD  ce Titles -->
-
-    <!-- Messages Preferences -->
-
-    <!-- Sync Preferences -->
+    <string name="create_account">Create Account</string>
 
 </resources>

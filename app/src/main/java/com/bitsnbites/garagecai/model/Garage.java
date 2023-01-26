@@ -1,6 +1,8 @@
 package com.bitsnbites.garagecai.model;
 
-public class Garage {
+import java.io.Serializable;
+
+public class Garage  implements Serializable  {
     String id, address;
     int spacePerCar, bike, bicycle;
     long latitude, longitude;
