@@ -1,0 +1,98 @@
+{
+  "project_info": {
+    "project_number": "336791101922",
+    "project_id": "garage-chai",
+    "storage_bucket": "garage-chai.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:336791101922:android:dc3f4b05747463893019bb",
+        "android_client_info": {
+          "package_name": "com.bitsnbites.garagecai"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "336791101922-2bufr1o923g4mmpbgnfmjut64cq4rev7.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.bitsnbites.garagecai",
+            "certificate_hash": "76ebd905b6426635824e446b3f0403ea40f52ae5"
+          }
+        },
+        {
+          "client_id": "336791101922-mj12lbfqd5ggjaevnu2ou84g6rhgqdqq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA4EN_hW7sFXN3riWmiDEkM6crsEXeE2tw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "336791101922-mj12lbfqd5ggjaevnu2ou84g6rhgqdqq.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "336791101922-smh5rofritm2ctcl8050egnkep55ai22.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.garageChai"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:336791101922:android:6d7212167862cdf63019bb",
+        "android_client_info": {
+          "package_name": "com.example.garage_chai"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "336791101922-n7vridped7flkfl5cg1631ke62jqfdjr.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.garage_chai",
+            "certificate_hash": "4c01ee3e4a26189002681556a258323729895d37"
+          }
+        },
+        {
+          "client_id": "336791101922-mj12lbfqd5ggjaevnu2ou84g6rhgqdqq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA4EN_hW7sFXN3riWmiDEkM6crsEXeE2tw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "336791101922-mj12lbfqd5ggjaevnu2ou84g6rhgqdqq.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "336791101922-smh5rofritm2ctcl8050egnkep55ai22.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.garageChai"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

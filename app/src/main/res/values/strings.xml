@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">Judges\' Platform BD</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="log_in">Log in</string>
+    <string name="ail_com">To verify, Please type your email and mobile number.</string>
+    <string name="otp_verification">OTP Verification</string>
+    <string name="complete">Complete</string>
+    <string name="mobile_number">Mobile Number</string>
+    <string name="verify">Next</string>
+    <string name="email">Email</string>
+
+
+    <!-- Preferen  Judges\' Platform BD  ce Titles -->
+
+    <!-- Messages Preferences -->
+
+    <!-- Sync Preferences -->
+
+</resources>
