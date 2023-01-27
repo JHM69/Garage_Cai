@@ -20,3 +20,10 @@
 
 ## Swimeline diagram
 <img src="https://github.com/JHM69/Garage_Cai/blob/master/screenshots/4.png?raw=true" title="Github Logo">
+
+
+
+
+
+## State diagram
+<img src="https://github.com/JHM69/Garage_Cai/blob/master/screenshots/5.png?raw=true" title="Github Logo">
