@@ -3,31 +3,47 @@ package com.bitsnbites.garagecai.model;
 import java.io.Serializable;
 
 public class Garage  implements Serializable  {
-    String id, address;
-    int spacePerCar, bike, bicycle;
-    long latitude, longitude;
+    String id, name, address;
+    int numberOfSlots, bike, bicycle;
+    double latitude, longitude;
     boolean availability;
+    boolean verified;
+    double rating;
 
-    int hourly_rate;
+    String ownerId;
+
+    int hourly_rate = 0;
     String seq_number;
 
     public static int BIKE_PER_CAR=2;
     public static int BICYCLE_PER_CAR=4;
 
-    public Garage(String id, String address, int spacePerCar, int bike, int bicycle, long latitude, long longitude, boolean availability, int hourly_rate, String seq_number) {
+
+    public Garage(String id, String name, String address, int numberOfSlots, int bike, int bicycle, double latitude, double longitude, boolean availability, boolean verified, String ownerId, int hourly_rate, String seq_number) {
         this.id = id;
+        this.name = name;
         this.address = address;
-        this.spacePerCar = spacePerCar;
+        this.numberOfSlots = numberOfSlots;
         this.bike = bike;
         this.bicycle = bicycle;
         this.latitude = latitude;
         this.longitude = longitude;
         this.availability = availability;
+        this.verified = verified;
+        this.ownerId = ownerId;
         this.hourly_rate = hourly_rate;
         this.seq_number = seq_number;
     }
 
     public Garage() {
+    }
+
+    public String getOwnerId() {
+        return ownerId;
+    }
+
+    public void setOwnerId(String ownerId) {
+        this.ownerId = ownerId;
     }
 
     public int getHourly_rate() {
@@ -36,6 +52,14 @@ public class Garage  implements Serializable  {
 
     public void setHourly_rate(int hourly_rate) {
         this.hourly_rate = hourly_rate;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getSeq_number() {
@@ -62,16 +86,24 @@ public class Garage  implements Serializable  {
         this.address = address;
     }
 
-    public float getSpacePerCar() {
-        return spacePerCar;
+    public double getRating() {
+        return rating;
     }
 
-    public void setSpacePerCar(int spacePerCar) {
-        this.spacePerCar = spacePerCar;
+    public void setRating(double rating) {
+        this.rating = rating;
+    }
+
+    public float getNumberOfSlots() {
+        return numberOfSlots;
+    }
+
+    public void setNumberOfSlots(int numberOfSlots) {
+        this.numberOfSlots = numberOfSlots;
     }
 
     public float getBike() {
-        return ( (float)spacePerCar/4)*BIKE_PER_CAR;
+        return ( (float) numberOfSlots /4)*BIKE_PER_CAR;
     }
 
     public void setBike(int bike) {
@@ -79,26 +111,27 @@ public class Garage  implements Serializable  {
     }
 
     public float getBicycle() {
-        return ((float)spacePerCar/4)*BICYCLE_PER_CAR;
+        return ((float) numberOfSlots /4)*BICYCLE_PER_CAR;
     }
 
     public void setBicycle(int bicycle) {
         this.bicycle = bicycle;
     }
 
-    public long getLatitude() {
+
+    public double getLatitude() {
         return latitude;
     }
 
-    public void setLatitude(long latitude) {
+    public void setLatitude(double latitude) {
         this.latitude = latitude;
     }
 
-    public long getLongitude() {
+    public double getLongitude() {
         return longitude;
     }
 
-    public void setLongitude(long longitude) {
+    public void setLongitude(double longitude) {
         this.longitude = longitude;
     }
 
@@ -106,7 +139,17 @@ public class Garage  implements Serializable  {
         return availability;
     }
 
+    public boolean isVerified() {
+        return verified;
+    }
+
+    public void setVerified(boolean verified) {
+        this.verified = verified;
+    }
+
     public void setAvailability(boolean availability) {
         this.availability = availability;
     }
+
+
 }

@@ -1,6 +1,6 @@
 package com.bitsnbites.garagecai.model;
 
-import androidx.annotation.NonNull;
+import com.google.firebase.firestore.SetOptions;
 
 import java.io.Serializable;
 
@@ -13,12 +13,12 @@ public class User implements Serializable {
     String photoUrl;
     String birthCertificate;
     Boolean birthCertificateVerified;
-
     String nid;
     String nidVerified;
+    String type = "none";
     long timestamp;
 
-    public User(String uuid, String email, String name, Boolean emailVerified, String number, String photoUrl, String birthCertificate, Boolean birthCertificateVerified, String nid, String nidVerified, long timestamp) {
+    public User(String uuid, String email, String name, Boolean emailVerified, String number, String photoUrl, String birthCertificate, Boolean birthCertificateVerified, String nid, String nidVerified, String type, long timestamp) {
         this.uuid = uuid;
         this.email = email;
         this.name = name;
@@ -29,10 +29,20 @@ public class User implements Serializable {
         this.birthCertificateVerified = birthCertificateVerified;
         this.nid = nid;
         this.nidVerified = nidVerified;
+        this.type = type;
         this.timestamp = timestamp;
     }
 
     public User() {
+        this.type = "none";
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
     public String getUuid() {

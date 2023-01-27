@@ -76,7 +76,7 @@
                     android:enabled="false"
                     android:importantForAutofill="no"
                     android:inputType="number"
-                    android:maxLength="25"
+                    android:maxLength="65"
                     tools:ignore="LabelFor" />
 
             </com.google.android.material.textfield.TextInputLayout>
@@ -100,7 +100,7 @@
                     android:layout_height="wrap_content"
                     android:importantForAutofill="no"
                     android:inputType="textEmailAddress"
-                    android:maxLength="25"
+                    android:maxLength="75"
                     tools:ignore="LabelFor" />
 
 
@@ -121,10 +121,10 @@
                 android:textSize="20sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView2" />
+                app:layout_constraintTop_toBottomOf="@+id/book" />
 
             <TextView
-                android:id="@+id/textView2"
+                android:id="@+id/book"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="32dp"

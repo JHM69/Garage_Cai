@@ -4,17 +4,16 @@ import static android.content.ContentValues.TAG;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,9 +26,8 @@ import com.bitsnbites.garagecai.R;
 import com.bitsnbites.garagecai.adapter.PlacesAutoCompleteAdapter;
 import com.bitsnbites.garagecai.model.Garage;
 import com.google.android.libraries.places.api.Places;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
 import com.google.gson.Gson;
 
 import java.io.File;
@@ -40,7 +38,10 @@ import dev.dayaonweb.incrementdecrementbutton.IncrementDecrementButton;
 
 public class AddGarage extends AppCompatActivity {
     Garage garage = new Garage();
-    Uri filesUri1, filesUri2, filesUri3, filesUri4 = Uri.fromFile(new File("//android_asset/temp.pdf"));;
+    Uri filesUri1 = Uri.fromFile(new File("//android_asset/temp.pdf"));;
+    Uri filesUri2 = Uri.fromFile(new File("//android_asset/temp.pdf"));;
+    Uri filesUri3 = Uri.fromFile(new File("//android_asset/temp.pdf"));;
+    Uri filesUri4 = Uri.fromFile(new File("//android_asset/temp.pdf"));;
 
     TextView file1, file2, file3, file4;
     Button selectFile1, selectFile2, selectFile3, selectFile4;
@@ -67,56 +68,88 @@ public class AddGarage extends AppCompatActivity {
 
         EditText nameEt = findViewById(R.id.station_name);
         EditText seq = findViewById(R.id.seq_number);
+        EditText hourlyRatee = findViewById(R.id.hourly_rate_amount);
 
         Places.initialize(getApplicationContext(), "AIzaSyAgddM3SuCy4Qiz0DjM6lE13C5P2rbY3RI");
 
         IncrementDecrementButton vehicleNumber = findViewById(R.id.number_of_vehicle);
-        EditText hourlyRate = findViewById(R.id.hourly_rate);
 
         Button submit = findViewById(R.id.button3);
         RecyclerView stations_list = findViewById(R.id.stations_list);
 
         submit.setOnClickListener(v -> {
-            garage.setAvailability(true);
-            garage.setId(getRandomString());
-            garage.setSeq_number(seq.getText().toString().trim());
-            garage.setHourly_rate(Integer.parseInt(hourlyRate.getText().toString()));
-            garage.setSpacePerCar(Integer.parseInt(vehicleNumber.getSceneString()));
+            ProgressDialog pg = new ProgressDialog(this);
+            pg.setCancelable(false);
+            pg.setTitle("Adding ....");
+            pg.show();
 
-            if (garage.getAddress() == null || garage.getSpacePerCar() == 0) {
-                Toast.makeText(AddGarage.this, "Error Garage Data", Toast.LENGTH_SHORT).show();
-                return;
-            }
+                garage.setAvailability(true);
+                garage.setId(getRandomString());
+                garage.setVerified(false);
+                garage.setRating(3.5);
+                garage.setOwnerId(FirebaseAuth.getInstance().getUid());
+                garage.setSeq_number(seq.getText().toString().trim());
+                try{
+                    Log.d("absss", "onCreate: "+ hourlyRatee.getText().toString());
+                    String s = hourlyRatee.getText().toString();
+                    garage.setHourly_rate(Integer.parseInt(s));
 
-            if(filesUri1==null || filesUri2==null ||filesUri3==null || filesUri4==null){
-                Toast.makeText(AddGarage.this, "Files are empty", Toast.LENGTH_SHORT).show();
-                return;
-            }
+                }catch (Exception e){
+                    garage.setHourly_rate(100);
+                }
 
-            StorageReference ref = FirebaseStorage.getInstance().getReference();
-            ref.child("images/" + garage.getId() + "/" + filesUri1.getLastPathSegment())
-                    .putFile(filesUri1).addOnFailureListener(exception -> {
-                        ref.child("images/" + garage.getId() + "/" + filesUri2.getLastPathSegment())
-                                .putFile(filesUri2).addOnFailureListener(exception2 -> {
+                try{
+                    garage.setNumberOfSlots(Integer.parseInt(String.valueOf(vehicleNumber.getSceneString())));
+                }catch (Exception e){
+                    garage.setNumberOfSlots(5);
+                }
 
-                                }).addOnSuccessListener(taskSnapshot -> {
-                                    ref.child("images/" + garage.getId() + "/" + filesUri3.getLastPathSegment())
-                                            .putFile(filesUri3).addOnFailureListener(exception3 -> {
 
-                                            }).addOnSuccessListener(taskSnapshot3 -> {
-                                                ref.child("images/" + garage.getId() + "/" + filesUri4.getLastPathSegment())
-                                                        .putFile(filesUri4).addOnFailureListener(exception4 -> {
+                if (  garage.getAddress() == null || garage.getNumberOfSlots() == 0) {
+                    Toast.makeText(AddGarage.this, "Error Garage Data", Toast.LENGTH_SHORT).show();
+                    pg.dismiss();
+                    return;
+                }
 
-                                                        }).addOnSuccessListener(taskSnapshot4 -> {
-                                                            FirebaseFirestore.getInstance().collection("Garage").document(garage.getId())
-                                                                    .set(garage).addOnCompleteListener(task -> Toast.makeText(AddGarage.this, "Added", Toast.LENGTH_SHORT).show());
+                if(filesUri1==null || filesUri2==null ||filesUri3==null || filesUri4==null){
+                    Toast.makeText(AddGarage.this, "Files are empty", Toast.LENGTH_SHORT).show();
+                    pg.dismiss();
+                    return;
+                }
 
-                                                        });
-                                            });
-                                });
-                    }).addOnSuccessListener(taskSnapshot -> {
+            FirebaseFirestore.getInstance().collection("Garage").document(garage.getId())
+                    .set(garage).addOnCompleteListener(task ->{
+                        pg.dismiss();
+                        Toast.makeText(AddGarage.this, "Added", Toast.LENGTH_SHORT).show();
 
-                    });
+                    } );
+
+//
+//                StorageReference ref = FirebaseStorage.getInstance().getReference();
+//                ref.child("images/" + garage.getId() + "/" + filesUri1.getLastPathSegment())
+//                        .putFile(filesUri1).addOnFailureListener(exception -> {
+//                            ref.child("images/" + garage.getId() + "/" + filesUri2.getLastPathSegment())
+//                                    .putFile(filesUri2).addOnFailureListener(exception2 -> {
+//
+//                                    }).addOnSuccessListener(taskSnapshot -> {
+//                                        ref.child("images/" + garage.getId() + "/" + filesUri3.getLastPathSegment())
+//                                                .putFile(filesUri3).addOnFailureListener(exception3 -> {
+//
+//                                                }).addOnSuccessListener(taskSnapshot3 -> {
+//                                                    ref.child("images/" + garage.getId() + "/" + filesUri4.getLastPathSegment())
+//                                                            .putFile(filesUri4).addOnFailureListener(exception4 -> {
+//
+//                                                            }).addOnSuccessListener(taskSnapshot4 -> {
+//
+//
+//                                                            });
+//                                                });
+//                                    });
+//                        }).addOnSuccessListener(taskSnapshot -> {
+//
+//                        });
+
+
 
 
         });
@@ -143,7 +176,7 @@ public class AddGarage extends AppCompatActivity {
                     mAutoCompleteAdapter.getFilter().filter(s.toString());
                     mAutoCompleteAdapter.notifyDataSetChanged();
                     mAutoCompleteAdapter.setClickListener(place -> {
-                        hideKeyboard((Activity) getApplicationContext());
+                        hideKeyboard(AddGarage.this);
                         try {
                             try {
                                 Log.d("fedf", "afterTextChanged:" +
@@ -151,10 +184,14 @@ public class AddGarage extends AppCompatActivity {
                             } catch (Exception n) {
                                 Log.d("ldlos", "afterTextChanged: " + n.getLocalizedMessage());
                             }
+                            garage.setName(place.getName());
                             garage.setAddress(place.getAddress());
                             nameEt.setText(garage.getAddress());
-                            garage.setLatitude((long) (Objects.requireNonNull(place.getLatLng())).latitude);
-                            garage.setLongitude((long) place.getLatLng().longitude);
+
+                            garage.setLatitude( (Objects.requireNonNull(place.getLatLng())).latitude);
+                            garage.setLongitude( place.getLatLng().longitude);
+
+                            mAutoCompleteAdapter.clear();
 
                         } catch (Exception y) {
                             Log.d(TAG, "afterTextChanged: " + y.getLocalizedMessage());
