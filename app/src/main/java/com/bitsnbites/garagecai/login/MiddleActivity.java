@@ -17,12 +17,12 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.io.Serializable;
 
 public class MiddleActivity extends AppCompatActivity {
+    String uuid;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registration);
-
-        User user = (User) getIntent().getSerializableExtra("user");
 
         TextView name = findViewById(R.id.name);
 
@@ -30,27 +30,37 @@ public class MiddleActivity extends AppCompatActivity {
 
         TextView email = findViewById(R.id.email);
 
-        if(user.getName().length()!=0){
-            name.setText((user.getName()));
-        }
+        try{
 
-        if(user.getEmail().length()!=0){
-            name.setText((user.getName()));
-        }
+            User user = (User) getIntent().getSerializableExtra("user");
+            uuid =  user.getUuid();
 
-        number.setText((user.getNumber()));
-        email.setText((user.getEmail()));
+            name.setText((user.getName()));
+            number.setText((user.getNumber()));
+            email.setText((user.getEmail()));
+
+        }catch (Exception e){
+             uuid = getIntent().getStringExtra("uuid");
+        }
 
 
 
         Button next = findViewById(R.id.button);
 
         next.setOnClickListener(v -> {
-            DocumentReference userRef =  FirebaseFirestore.getInstance().collection("Users").document(user.getUuid());
+            DocumentReference userRef =  FirebaseFirestore.getInstance().collection("Users").document(uuid);
             userRef.update("name", name.getText().toString());
             userRef.update("email", email.getText().toString().trim());
             userRef.update("createdAt", System.currentTimeMillis());
-            OfflineUser.setUser(getApplication(), "user",user);
+
+            User user = new User();
+
+            user.setUuid(uuid);
+            user.setName( name.getText().toString());
+            user.setEmail(email.getText().toString().trim());
+
+            startActivity( new Intent().putExtra("uuid", user.getUuid()));
+            finish();
         });
 
 

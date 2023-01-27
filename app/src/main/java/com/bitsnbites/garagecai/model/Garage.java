@@ -8,10 +8,13 @@ public class Garage  implements Serializable  {
     long latitude, longitude;
     boolean availability;
 
+    int hourly_rate;
+    String seq_number;
+
     public static int BIKE_PER_CAR=2;
     public static int BICYCLE_PER_CAR=4;
 
-    public Garage(String id, String address, int spacePerCar, int bike, int bicycle, long latitude, long longitude, boolean availability) {
+    public Garage(String id, String address, int spacePerCar, int bike, int bicycle, long latitude, long longitude, boolean availability, int hourly_rate, String seq_number) {
         this.id = id;
         this.address = address;
         this.spacePerCar = spacePerCar;
@@ -20,9 +23,27 @@ public class Garage  implements Serializable  {
         this.latitude = latitude;
         this.longitude = longitude;
         this.availability = availability;
+        this.hourly_rate = hourly_rate;
+        this.seq_number = seq_number;
     }
 
     public Garage() {
+    }
+
+    public int getHourly_rate() {
+        return hourly_rate;
+    }
+
+    public void setHourly_rate(int hourly_rate) {
+        this.hourly_rate = hourly_rate;
+    }
+
+    public String getSeq_number() {
+        return seq_number;
+    }
+
+    public void setSeq_number(String seq_number) {
+        this.seq_number = seq_number;
     }
 
     public String getId() {
