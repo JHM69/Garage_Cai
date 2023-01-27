@@ -9,7 +9,7 @@ Targetted users are Leasers and Renters.
 The features of our system are-
 1. Lease Parking Space
 2. Rent Parking Space
-3.Smart Validation System
+3. Smart Validation System
 4. Best Deal
 5. Dynamic Price Calculation
 6. Advanced Security
