@@ -3,7 +3,7 @@
 # Garage Chai
 
 ## ER Diagram
-<img src="https://github.com/JHM69/Garage_Cai/blob/master/screenshots/1.jpg?raw=true" title="Github Logo">
+<img src="https://github.com/JHM69/Garage_Cai/blob/master/screenshots/1.png?raw=true" title="Github Logo">
 
 
 
@@ -14,3 +14,16 @@
 
 ## Use case diagram
 <img src="https://github.com/JHM69/Garage_Cai/blob/master/screenshots/3.png?raw=true" title="Github Logo">
+
+
+
+
+## Swimeline diagram
+<img src="https://github.com/JHM69/Garage_Cai/blob/master/screenshots/4.png?raw=true" title="Github Logo">
+
+
+
+
+
+## State diagram
+<img src="https://github.com/JHM69/Garage_Cai/blob/master/screenshots/5.png?raw=true" title="Github Logo">
