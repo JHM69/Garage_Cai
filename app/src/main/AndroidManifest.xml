@@ -12,20 +12,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:targetApi="31">
-        <activity
-            android:name=".BookingActivity"
-            android:exported="false">
-            <meta-data
-                android:name="android.app.lib_name"
-                android:value="" />
-        </activity>
-        <activity
-            android:name=".BookaGarageActivity"
-            android:exported="false">
-            <meta-data
-                android:name="android.app.lib_name"
-                android:value="" />
-        </activity>
+
         <activity
             android:name=".Activity.Splash"
             android:exported="true"
@@ -43,6 +30,9 @@
         <activity android:name=".Activity.AddGarage" />
         <activity android:name=".Activity.MyGarages" />
         <activity android:name=".Activity.ShowMap" />
+        <activity android:name=".Activity.Successfull" />
+        <activity android:name=".Activity.PaymentActivity" />
+        <activity android:name=".Activity.BookingActivity" />
     </application>
 
 </manifest>

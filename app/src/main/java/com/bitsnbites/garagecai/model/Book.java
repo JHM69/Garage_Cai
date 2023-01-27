@@ -3,12 +3,15 @@ package com.bitsnbites.garagecai.model;
 import static com.bitsnbites.garagecai.model.Garage.BICYCLE_PER_CAR;
 import static com.bitsnbites.garagecai.model.Garage.BIKE_PER_CAR;
 
+import java.io.Serializable;
 import java.util.Objects;
 
-public class Book {
+public class Book implements Serializable {
     String id;
     String vehicleType;
     int bookingAmount;
+
+    String status = "pending";
 
     String userId, garageId;
 
@@ -17,16 +20,28 @@ public class Book {
 
     long startTimestamp, endTimestamp;
 
-    public Book(String id, String vehicleType, int bookingAmount, String userId, String garageId, int hourlyRate, int number_of_vehicle, long startTimestamp, long endTimestamp) {
+    public Book(String id, String vehicleType, int bookingAmount, String status, String userId, String garageId, int hourlyRate, int number_of_vehicle, long startTimestamp, long endTimestamp) {
         this.id = id;
         this.vehicleType = vehicleType;
         this.bookingAmount = bookingAmount;
+        this.status = status;
         this.userId = userId;
         this.garageId = garageId;
         this.hourlyRate = hourlyRate;
         this.number_of_vehicle = number_of_vehicle;
         this.startTimestamp = startTimestamp;
         this.endTimestamp = endTimestamp;
+    }
+
+    public Book() {
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public String getId() {

@@ -509,7 +509,7 @@ public class ShowMap extends AppCompatActivity implements RoutingListener, OnMap
         return strAdd;
     }
 
-    protected String getSaltString() {
+    public static String getSaltString() {
         String SALTCHARS = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         StringBuilder salt = new StringBuilder();
         Random rnd = new Random();

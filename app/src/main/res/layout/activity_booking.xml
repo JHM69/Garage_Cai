@@ -107,4 +107,29 @@
         app:layout_constraintStart_toStartOf="@+id/number_of_vehicle"
         app:layout_constraintTop_toBottomOf="@+id/startBtnTime" />
 
+    <TextView
+        android:id="@+id/textView13"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:background="@drawable/boarder"
+        android:padding="10dp"
+        android:text="Hourly Rate (min 3 hr) : 4.16 taka/hour \n7 Days : 3.47 taka/hour\n1 Month : 3.19 taka/hour"
+        android:textAlignment="center"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="@+id/EndBtnTime"
+        app:layout_constraintStart_toStartOf="@+id/EndBtnTime"
+        app:layout_constraintTop_toBottomOf="@+id/EndBtnTime" />
+
+    <Button
+        android:id="@+id/button7"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="Continue"
+        app:layout_constraintEnd_toEndOf="@+id/textView13"
+        app:layout_constraintStart_toStartOf="@+id/textView13"
+        app:layout_constraintTop_toBottomOf="@+id/textView13" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
