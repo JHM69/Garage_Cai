@@ -18,6 +18,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Source;
 import com.google.gson.Gson;
 
 import java.util.Objects;
@@ -46,56 +47,34 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
         findViewById(R.id.leaser).setOnClickListener(v -> {
             Intent intent;
-            try{
-                if(Objects.equals(user.getType(), "both"))  intent = new Intent(getApplicationContext(), AddGarage.class);
-                else if(Objects.equals(user.getType(), "none") ||  !Objects.equals(user.getType(), "leaser")){
-                    intent = new Intent(getApplicationContext(), MiddleActivity.class).putExtra("type", "leaser");
-                }else{
-                    intent = new Intent(getApplicationContext(), AddGarage.class);
-                }
-
-            }catch (Exception s){
-                intent = new Intent(getApplicationContext(), MiddleActivity.class).putExtra("type", "leaser");
-            }
+            intent = new Intent(getApplicationContext(), AddGarage.class);
             startActivity(intent);
         });
 
         findViewById(R.id.renter).setOnClickListener(v -> {
             Intent intent;
-            try{
-                if(Objects.equals(user.getType(), "both"))  intent = new Intent(getApplicationContext(), ShowMap.class);
-                else if(Objects.equals(user.getType(), "none") ||  !Objects.equals(user.getType(), "renter")){
-                    intent = new Intent(getApplicationContext(), MiddleActivity.class).putExtra("type", "renter");
-                }else{
-                    intent = new Intent(getApplicationContext(), ShowMap.class);
-                }
-
-            }catch (Exception s){
-                intent = new Intent(getApplicationContext(), MiddleActivity.class).putExtra("type", "renter");
-
-            }
+//            try{
+//
+//                if(Objects.equals(user.getType(), "none") ||  !Objects.equals(user.getType(), "renter")){
+//                    intent = new Intent(getApplicationContext(), MiddleActivity.class).putExtra("type", "renter");
+//                }else{
+//                    intent = new Intent(getApplicationContext(), ShowMap.class);
+//                }
+//
+//            }catch (Exception s){
+//                intent = new Intent(getApplicationContext(), MiddleActivity.class).putExtra("type", "renter");
+//
+//            }
+            intent = new Intent(getApplicationContext(), ShowMap.class);
             startActivity(intent);
         });
 
 
         findViewById(R.id.allGarage).setOnClickListener(v -> {
             Intent intent;
-            try{
-                if(Objects.equals(user.getType(), "both"))  intent = new Intent(getApplicationContext(), MyGarages.class);
-                else if(Objects.equals(user.getType(), "none") ||  !Objects.equals(user.getType(), "leaser")){
-                    intent = new Intent(getApplicationContext(), MiddleActivity.class).putExtra("type", "renter");
-                }
-                else{
-                    intent = new Intent(getApplicationContext(), MyGarages.class);
-                }
-
-            }catch (Exception s){
-                intent = new Intent(getApplicationContext(), MiddleActivity.class).putExtra("type", "renter");
-
-            }
+            intent = new Intent(getApplicationContext(), MyGarages.class);
             startActivity(intent);
         });
     }

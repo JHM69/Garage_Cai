@@ -105,13 +105,13 @@ public class AddGarage extends AppCompatActivity {
                 }
 
 
-                if (  garage.getAddress() == null || garage.getNumberOfSlots() == 0) {
+                if ( garage.getAddress() == null || garage.getNumberOfSlots() == 0) {
                     Toast.makeText(AddGarage.this, "Error Garage Data", Toast.LENGTH_SHORT).show();
                     pg.dismiss();
                     return;
                 }
 
-                if(filesUri1==null || filesUri2==null ||filesUri3==null || filesUri4==null){
+                if(filesUri1==null || filesUri2==null || filesUri3==null || filesUri4==null){
                     Toast.makeText(AddGarage.this, "Files are empty", Toast.LENGTH_SHORT).show();
                     pg.dismiss();
                     return;

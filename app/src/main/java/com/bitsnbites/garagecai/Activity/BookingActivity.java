@@ -1,23 +1,28 @@
 package com.bitsnbites.garagecai.Activity;
 
-import static com.bitsnbites.garagecai.Activity.ShowMap.getSaltString;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.format.DateFormat;
+import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 import com.bitsnbites.garagecai.R;
 import com.bitsnbites.garagecai.model.Book;
@@ -29,9 +34,9 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.Calendar;
 import java.util.Map;
+import java.util.UUID;
 
 import dev.dayaonweb.incrementdecrementbutton.IncrementDecrementButton;
-import me.adawoud.bottomsheettimepicker.BottomSheetTimeRangePicker;
 
 
 public class BookingActivity extends AppCompatActivity {
@@ -53,8 +58,9 @@ public class BookingActivity extends AppCompatActivity {
 
     int mHourEnd;
     int mMinuteEnd;
-
-
+    String[] types = {"car", "bike", "bicycle"};
+    Book book = new Book();
+    @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,75 +68,78 @@ public class BookingActivity extends AppCompatActivity {
 
         garage = (Garage) getIntent().getSerializableExtra("garage");
 
-        AutoCompleteTextView av = findViewById(R.id.vehicle_type);
-        TextView t = findViewById(R.id.textView2);
-        t.setText(String.valueOf(garage.getNumberOfSlots()));
+        @SuppressLint("CutPasteId") AutoCompleteTextView av = findViewById(R.id.vehicle_type);
+        TextView t = findViewById(R.id.textView13);
+        TextView et = findViewById(R.id.textView2);
+        et.setText( "Slots : " + garage.getNumberOfSlots());
+        String s = "Parking Name    : " + garage.getName() + "\n\n";
+        s+=        "Available : " + garage.isAvailability() + "\n";
+        s+=        "Bike Slots       : " + garage.getBike() + "\n";
+        s+=        "Bicycle Slots   : " + garage.getBicycle() + "\n";
+        s+=        "Hourly Rate     : " + garage.getHourly_rate() + "\n";
+
+        t.setText(s);
 
         Button startTime = findViewById(R.id.startBtnTime);
         Button endTime = findViewById(R.id.EndBtnTime);
 
 
+        final AutoCompleteTextView textView;
+        final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(
+                getApplicationContext(), android.R.layout.simple_dropdown_item_1line,
+                types);
+
+        textView = findViewById(R.id.vehicle_type);
+        textView.setAdapter(arrayAdapter);
+        textView.setOnClickListener(arg0 -> textView.showDropDown());
 
 
+        startTime.setOnClickListener(v -> datePicker(startTime));
+
+        endTime.setOnClickListener(v -> datePickerEnd(endTime));
+
+        Button bookData = findViewById(R.id.button7);
 
 
-
-        startTime.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                datePicker(startTime);
-            }
-        });
-
-        endTime.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                datePickerEnd(endTime);
-            }
-        });
-
-        Button book = findViewById(R.id.startBtnTime);
-
-        IncrementDecrementButton incrementDecrementButton = findViewById(R.id.number_of_vehicle);
+        bookData.setOnClickListener(v -> {
 
 
-        book.setOnClickListener(v -> {
 
             ProgressDialog pg = new ProgressDialog(this);
             pg.setCancelable(false);
             pg.setTitle("Booking ....");
             pg.show();
 
-            Book b = new Book();
-            String vehicleType = av.getText().toString();
-            int occoupaid = Integer.parseInt(String.valueOf( incrementDecrementButton.getSceneString()));
-            b.setNumber_of_vehicle(occoupaid);
-            b.setHourlyRate(garage.getHourly_rate());
-            b.setStartTimestamp(0); // will use dynamic value later
-            b.setEndTimestamp(720000); // will use dynamic value later
+                String vehicleType = av.getText().toString();
+                book.setVehicleType(vehicleType);
+                book.setNumber_of_vehicle(1);
+                book.setHourlyRate(garage.getHourly_rate());
 
-            b.setId(getSaltString());
-            b.setUserId(garage.getOwnerId());
-            b.setUserId(garage.getId());
+                book.setId(UUID.randomUUID().toString());
+                book.setUserId(garage.getOwnerId());
+                book.setUserId(garage.getId());
 
-            FirebaseFirestore.getInstance().collection("Book").document(String.valueOf(book.getId())).
-                    set(book).addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            if(task.isSuccessful()){
-                                pg.dismiss();
-                                Intent intent = new Intent(BookingActivity.this, PaymentActivity.class);
-                                intent.putExtra("book" , b);
-                                startActivity(intent);
-                            }else{
-                                pg.dismiss();
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Confirmation");
+            builder.setMessage("Price amount is "+ book.getBookingAmount() + " Taka");
+            builder.setPositiveButton("OK", (dialog, which) -> FirebaseFirestore.getInstance().collection("Book").document(book.getId())
+                    .set(garage).addOnCompleteListener(task ->{
 
-                            }
-
-                        }
-                    });
+                        pg.dismiss();
+                        Intent intent = new Intent(BookingActivity.this, PaymentActivity.class);
+                        intent.putExtra("book" , book);
+                        startActivity(intent);
+                    } ));
+            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    pg.dismiss();
+                }
+            });
+            AlertDialog alert = builder.create();
+            alert.show();
 
         });
+
 
 
 
@@ -145,15 +154,9 @@ public class BookingActivity extends AppCompatActivity {
         mDay = c.get(Calendar.DAY_OF_MONTH);
 
         DatePickerDialog datePickerDialog = new DatePickerDialog(this,
-                new DatePickerDialog.OnDateSetListener() {
-
-                    @Override
-                    public void onDateSet(DatePicker view, int year,int monthOfYear, int dayOfMonth) {
-
-                        date_time = dayOfMonth + "-" + (monthOfYear + 1) + "-" + year;
-                        //*************Call Time Picker Here ********************
-                        tiemPicker(b);
-                    }
+                (view, year, monthOfYear, dayOfMonth) -> {
+                    date_time = dayOfMonth + "-" + (monthOfYear + 1) + "-" + year;
+                    tiemPicker(b);
                 }, mYear, mMonth, mDay);
         datePickerDialog.show();
     }
@@ -165,16 +168,16 @@ public class BookingActivity extends AppCompatActivity {
         mMinute = c.get(Calendar.MINUTE);
 
         // Launch Time Picker Dialog
-        TimePickerDialog timePickerDialog = new TimePickerDialog(this,
-                new TimePickerDialog.OnTimeSetListener() {
+        @SuppressLint("SetTextI18n") TimePickerDialog timePickerDialog = new TimePickerDialog(this,
+                (view, hourOfDay, minute) -> {
+                    mHour = hourOfDay;
+                    mMinute = minute;
 
-                    @Override
-                    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.set(mYear, mMonth, mDay, mHour, mMinute);
+                    book.setStartTimestamp(calendar.getTimeInMillis()); // will use dynamic value later
 
-                        mHour = hourOfDay;
-                        mMinute = minute;
-                        b.setText(date_time+" "+hourOfDay + ":" + minute);
-                    }
+                    b.setText(date_time+" "+hourOfDay + ":" + minute);
                 }, mHour, mMinute, false);
         timePickerDialog.show();
     }
@@ -189,15 +192,9 @@ public class BookingActivity extends AppCompatActivity {
         mDayEnd = c.get(Calendar.DAY_OF_MONTH);
 
         DatePickerDialog datePickerDialog = new DatePickerDialog(this,
-                new DatePickerDialog.OnDateSetListener() {
-
-                    @Override
-                    public void onDateSet(DatePicker view, int year,int monthOfYear, int dayOfMonth) {
-
-                        date_timeEnd = dayOfMonth + "-" + (monthOfYear + 1) + "-" + year;
-                        //*************Call Time Picker Here ********************
-                        tiemPicker(b);
-                    }
+                (view, year, monthOfYear, dayOfMonth) -> {
+                    date_timeEnd = dayOfMonth + "-" + (monthOfYear + 1) + "-" + year;
+                    tiemPickerEnd(b);
                 }, mYearEnd, mMonthEnd, mDayEnd);
         datePickerDialog.show();
     }
@@ -209,18 +206,18 @@ public class BookingActivity extends AppCompatActivity {
         mMinuteEnd = c.get(Calendar.MINUTE);
 
         // Launch Time Picker Dialog
-        TimePickerDialog timePickerDialog = new TimePickerDialog(this,
-                new TimePickerDialog.OnTimeSetListener() {
+        @SuppressLint("SetTextI18n") TimePickerDialog timePickerDialog = new TimePickerDialog(this,
+                (view, hourOfDay, minute) -> {
+                    mHourEnd = hourOfDay;
+                    mMinuteEnd = minute;
+                    b.setText(date_timeEnd+" "+hourOfDay + ":" + minute);
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.set(mYearEnd, mMonthEnd, mDayEnd, mHourEnd, mMinuteEnd);
+                    book.setEndTimestamp(calendar.getTimeInMillis()); // will use dynamic value later
 
-                    @Override
-                    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-
-                        mHourEnd = hourOfDay;
-                        mMinuteEnd = minute;
-                        b.setText(date_timeEnd+" "+hourOfDay + ":" + minute);
-                    }
                 }, mHourEnd, mMinuteEnd, false);
         timePickerDialog.show();
     }
+
 
 }

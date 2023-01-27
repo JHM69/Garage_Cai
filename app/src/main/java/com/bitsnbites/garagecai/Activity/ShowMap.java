@@ -1,43 +1,42 @@
 package com.bitsnbites.garagecai.Activity;
 
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
-import android.location.Address;
-import android.location.Geocoder;
-import android.location.Location;
-import android.location.LocationListener;
-import android.os.Bundle;
-
-import com.bitsnbites.garagecai.R;
-
-import android.annotation.SuppressLint;
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
+import android.location.Address;
+import android.location.Location;
+import com.google.android.gms.location.LocationListener;
 import android.os.Bundle;
-import android.os.PersistableBundle;
+import android.os.Handler;
+import android.provider.CalendarContract;
 import android.provider.Settings;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.bitsnbites.garagecai.R;
+import com.bitsnbites.garagecai.adapter.GarageAdapter;
 import com.bitsnbites.garagecai.model.Garage;
 import com.directions.route.AbstractRouting;
 import com.directions.route.RouteException;
@@ -66,13 +65,24 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
-
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Objects;
-import java.util.Random;
 
 public class ShowMap extends AppCompatActivity implements RoutingListener, OnMapReadyCallback , ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
@@ -83,9 +93,11 @@ public class ShowMap extends AppCompatActivity implements RoutingListener, OnMap
     String userId;
     Marker busLocation;
     //  MarkerOptions options;
+    private List<Polyline> polyLines = new ArrayList<>();
 
+    PendingResult<LocationSettingsResult> result;
     final static int REQUEST_LOCATION = 199;
-    int gap = 5;
+    int gap = 5 ;
     LocationRequest mLocationRequest;
     private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
     private GoogleApiClient mGoogleApiClient;
@@ -93,52 +105,109 @@ public class ShowMap extends AppCompatActivity implements RoutingListener, OnMap
     private static final int REQUEST_CODE_PERMISSION = 2;
     String mPermission = android.Manifest.permission.ACCESS_FINE_LOCATION;
 
-    PendingResult<LocationSettingsResult> result;
-    private List<Polyline> polyLines = new ArrayList<>();
-
-
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState, @Nullable PersistableBundle persistentState) {
-        super.onCreate(savedInstanceState, persistentState);
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.show_garage);
 
-        setContentView(R.layout.map_view);
+        BottomSheetDialog bottomSheerDialog = new BottomSheetDialog(this);
+        View parentView = getLayoutInflater().inflate(R.layout.dialog,null);
+        bottomSheerDialog.setContentView(parentView);
+
+        RecyclerView rcv = parentView.findViewById(R.id.garages);
+
+        TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,100,getResources().getDisplayMetrics());
+        bottomSheerDialog.show();
 
 
-        for (Garage s : garageList) {
-            allAddresss.add(new LatLng(s.getLatitude(), s.getLongitude()));
-        }
 
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+        final GarageAdapter[] garageAdapter = {new GarageAdapter(ShowMap.this, garageList)};
+        //userView.setAdapter(addressAdapter);
+
+            FirebaseFirestore.getInstance().collection("Garage").addSnapshotListener(new EventListener<QuerySnapshot>() {
+                        @Override
+                        public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                            assert value != null;
+                            if (!value.isEmpty()) {
+                                List<DocumentSnapshot> list = value.getDocuments();
+                                try {
+                                    for (DocumentSnapshot d : list) {
+                                        Log.d("userGarage", "onCreate: " + d);
+                                        Garage g = d.toObject(Garage.class);
+
+                                        allAddresss.add(new LatLng(Objects.requireNonNull(g).getLatitude(), g.getLongitude()));
+                                        garageList.add(g);
+                                        garageAdapter[0] = new GarageAdapter(ShowMap.this, garageList);
+                                        garageAdapter[0].notifyDataSetChanged();
+                                    }
+
+
+
+                                    try {
+                                        Routing routing = new Routing.Builder()
+                                                .travelMode(Routing.TravelMode.DRIVING)
+                                                .withListener(ShowMap.this)
+                                                .waypoints(allAddresss)
+                                                .key("AIzaSyAgddM3SuCy4Qiz0DjM6lE13C5P2rbY3RI")
+                                                .build();
+
+                                        routing.execute();
+
+
+                                        GarageAdapter garageAdapter = new GarageAdapter(getApplicationContext(), garageList);
+                                        rcv.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+                                        rcv.setAdapter(garageAdapter);
+                                        garageAdapter.notifyDataSetChanged();
+
+
+                                    } catch (Exception d) {
+                                        Toast.makeText(getApplicationContext(), "Null", Toast.LENGTH_SHORT).show();
+                                    }
+                                } catch (Exception g) {
+                                    Log.d("frgre", "onCreate: + ni" + g);
+                                }
+
+                            }
+                        }
+                    });
+
+
+
+        // options = new MarkerOptions();
+        // options.icon(bitmapDescriptorFromVector(getContext(), R.drawable.ic_icon, R.color.color_theme_2));
+
+        buildGoogleApiClient();
+        SupportMapFragment mapFragment =
+                (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         if (mapFragment != null) {
             mapFragment.getMapAsync(this);
         }
 
-        Toast.makeText(this, "Loading nearby garages", Toast.LENGTH_SHORT).show();
 
-        try {
-            Routing routing = new Routing.Builder()
-                    .travelMode(Routing.TravelMode.DRIVING)
-                    .withListener(this)
-                    .waypoints(allAddresss)
-                    .key("AIzaSyAgddM3SuCy4Qiz0DjM6lE13C5P2rbY3RI")
-                    .build();
+       // fetchLocation();
 
-            routing.execute();
+    }
 
+    public synchronized void buildGoogleApiClient() {
+        mGoogleApiClient = new GoogleApiClient.Builder(getBaseContext())
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API)
+                .build();
+        mGoogleApiClient.connect();
+    }
 
-            try {
-                if (ActivityCompat.checkSelfPermission(this, mPermission) != PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions(this, new String[]{mPermission}, REQUEST_CODE_PERMISSION);
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-            buildGoogleApiClient();
-
-        } catch (Exception d) {
-            Toast.makeText(getApplicationContext(), "Null", Toast.LENGTH_SHORT).show();
+    private void fetchLocation() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            showSettingsAlert();
+        } else {
+            LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        finish();
     }
 
 
@@ -194,9 +263,9 @@ public class ShowMap extends AppCompatActivity implements RoutingListener, OnMap
                 options.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
                 map.addMarker(options);
             } else if (i == garageList.size() - 1) {
-//                Address l = garageList.get(i);
+//                Garage l = garageList.get(i);
 //                MarkerOptions options = new MarkerOptions();
-//                options.position(new LatLng(l.getLat(), l.getLon()));
+//                options.position(new LatLng(l.getLat(), l.getLongitude()));
 //                options.title(l.getAddress());
 //                options.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
 //                map.addMarker(options);
@@ -229,7 +298,10 @@ public class ShowMap extends AppCompatActivity implements RoutingListener, OnMap
         map.setTrafficEnabled(false);
         map.setBuildingsEnabled(false);
 
-        //update lat lon
+//        for(Garage g : garageList){
+//            LatLng current = new LatLng(Objects.requireNonNull(g).getLatitude(), g.getLongitude());
+//            updateCamera(current, busLocation);
+//        }
     }
 
     private void updateCamera(LatLng currentLatLng, Marker marker) {
@@ -262,62 +334,6 @@ public class ShowMap extends AppCompatActivity implements RoutingListener, OnMap
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    public synchronized void buildGoogleApiClient() {
-        mGoogleApiClient = new GoogleApiClient.Builder(getBaseContext())
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .addApi(LocationServices.API)
-                .build();
-        mGoogleApiClient.connect();
-    }
-
-    private void fetchLocation() {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            showSettingsAlert();
-        } else {
-            LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, (com.google.android.gms.location.LocationListener) this);
-        }
-    }
-
-
-    @Override
-    public void onBackPressed() {
-        finish();
-    }
-
-
-
     @SuppressLint("SetTextI18n")
     @Override
     public void onLocationChanged(@NonNull Location loc) {
@@ -337,7 +353,7 @@ public class ShowMap extends AppCompatActivity implements RoutingListener, OnMap
             showSettingsAlert();
         } else {
             if (mGoogleApiClient.isConnected())
-                LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, (com.google.android.gms.location.LocationListener) this);
+                LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
         }
         LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
                 .addLocationRequest(mLocationRequest);
@@ -361,7 +377,7 @@ public class ShowMap extends AppCompatActivity implements RoutingListener, OnMap
                         // Show the dialog by calling startResolutionForResult(),
                         // and check the result in onActivityResult().
                         status.startResolutionForResult(
-                                this,
+                                ShowMap.this,
                                 REQUEST_LOCATION);
                     } catch (IntentSender.SendIntentException e) {
                         // Ignore the error.
@@ -386,12 +402,17 @@ public class ShowMap extends AppCompatActivity implements RoutingListener, OnMap
         if (requestCode == REQUEST_LOCATION) {
             switch (resultCode) {
                 case Activity.RESULT_OK: {
+                    Toast.makeText(ShowMap.this, "Location Enabled. Thank you", Toast.LENGTH_LONG).show();
                     if (mGoogleApiClient.isConnected())
                         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                             showSettingsAlert();
                         }else {
-                            LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, (com.google.android.gms.location.LocationListener) this);
+                            LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
                         }
+                    break;
+                }
+                case Activity.RESULT_CANCELED: {
+                    Toast.makeText(this, "Location Not updating", Toast.LENGTH_SHORT).show();
                     break;
                 }
                 default: {
@@ -429,28 +450,17 @@ public class ShowMap extends AppCompatActivity implements RoutingListener, OnMap
         double latitude = loc.getLatitude();
         double longitude = loc.getLongitude();
 
-        String newAddress = getCompleteAddressString(latitude, longitude);
 
 
-
-        Log.d("locav", "updateLocation: new address "+ newAddress);
+        LatLng current = new LatLng(latitude, longitude);
+        updateCamera(current, busLocation);
 
 
         float[] results = new float[1];
-        Location.distanceBetween(latitude, longitude, 0.0, 0.0, results);
+        Location.distanceBetween(latitude, longitude, 0, 0, results);
         float currentDistanceFromPreviousStation = results[0];
 
-
-
-
-
-//        } else {
-//            success.setAnimation(R.raw.mid);
-//            success.loop(true);
-//            success.playAnimation();
-//            location.setText("You are around "+ (int) currentDistanceFromPreviousStation + " meter apart from \n" + oldAddress);
-//        }
-        LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, (com.google.android.gms.location.LocationListener) this);
+        LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
     }
 
     public void showSettingsAlert() {
@@ -473,53 +483,6 @@ public class ShowMap extends AppCompatActivity implements RoutingListener, OnMap
         // Showing Alert Message
         alertDialog.show();
     }
-    @SuppressLint("ObsoleteSdkInt")
-    private void setClipboard(Context context, String text) {
-        if(android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.HONEYCOMB) {
-            android.text.ClipboardManager clipboard = (android.text.ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
-            clipboard.setText(text);
-        } else {
-            android.content.ClipboardManager clipboard = (android.content.ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
-            android.content.ClipData clip = android.content.ClipData.newPlainText("Copied Text", text);
-            clipboard.setPrimaryClip(clip);
-        }
-        Toast.makeText(context, "Code copied to clipboard", Toast.LENGTH_SHORT).show();
-    }
-    @SuppressLint("LongLogTag")
-    private String getCompleteAddressString(double LATITUDE, double LONGITUDE) {
-        String strAdd = "";
-        Geocoder geocoder = new Geocoder(this, Locale.getDefault());
-        try {
-            List<android.location.Address> addresses = geocoder.getFromLocation(LATITUDE, LONGITUDE, 1);
-            if (addresses != null) {
-                Address returnedAddress = addresses.get(0);
-                StringBuilder strReturnedAddress = new StringBuilder();
-                for (int i = 0; i <= returnedAddress.getMaxAddressLineIndex(); i++) {
-                    strReturnedAddress.append(returnedAddress.getAddressLine(i)).append("\n");
-                }
-                strAdd = strReturnedAddress.toString();
-                Log.w("My Current location address", strReturnedAddress.toString());
-            } else {
-                Log.w("My Current location address", "No Address returned!");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            Log.w("My Current location address", "Canont get Address!");
-        }
-        return strAdd;
-    }
-
-    public static String getSaltString() {
-        String SALTCHARS = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-        StringBuilder salt = new StringBuilder();
-        Random rnd = new Random();
-        while (salt.length() < 18) { // length of the random string.
-            int index = (int) (rnd.nextFloat() * SALTCHARS.length());
-            salt.append(SALTCHARS.charAt(index));
-        }
-        return salt.toString();
-    }
-
     @Override
     public void onStart(){
         super.onStart();
@@ -538,13 +501,11 @@ public class ShowMap extends AppCompatActivity implements RoutingListener, OnMap
         try {
             //stop location updates when Activity is no longer active
             if (mGoogleApiClient != null) {
-                LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, (com.google.android.gms.location.LocationListener) this);
+                LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
             }
         }catch (Exception ignored){
 
         }
     }
-
-
 
 }

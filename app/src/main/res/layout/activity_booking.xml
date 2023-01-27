@@ -6,22 +6,13 @@
     android:layout_height="match_parent"
     tools:context=".Activity.BookingActivity">
 
-    <dev.dayaonweb.incrementdecrementbutton.IncrementDecrementButton
-        android:id="@+id/number_of_vehicle"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        app:layout_constraintEnd_toEndOf="@+id/textInputLayout"
-        app:layout_constraintStart_toStartOf="@+id/textInputLayout"
-        app:layout_constraintTop_toBottomOf="@+id/textInputLayout"
-        app:middleText="Number of Vehicle" />
-
     <TextView
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
         android:text="Available Space"
+        android:textColor="@color/olive"
         android:textSize="24sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
@@ -34,10 +25,11 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
         android:text="Vehicle Type"
+        android:textColor="@color/olive"
         android:textSize="24sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="@+id/textInputLayout"
-        app:layout_constraintTop_toBottomOf="@+id/cardView" />
+        app:layout_constraintTop_toBottomOf="@+id/textView13" />
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cardView"
@@ -57,7 +49,8 @@
             android:gravity="center"
             android:text="6"
             android:textAlignment="center"
-            android:textSize="34sp"
+            android:textColor="@color/olive"
+            android:textSize="24sp"
             android:textStyle="bold" />
     </androidx.cardview.widget.CardView>
 
@@ -90,9 +83,9 @@
         android:backgroundTint="#DADADA"
         android:text="Start Time: "
         android:textColor="@color/olive"
-        app:layout_constraintEnd_toEndOf="@+id/number_of_vehicle"
-        app:layout_constraintStart_toStartOf="@+id/number_of_vehicle"
-        app:layout_constraintTop_toBottomOf="@+id/number_of_vehicle" />
+        app:layout_constraintEnd_toEndOf="@+id/textInputLayout"
+        app:layout_constraintStart_toStartOf="@+id/textInputLayout"
+        app:layout_constraintTop_toBottomOf="@+id/textInputLayout" />
 
     <Button
         android:id="@+id/EndBtnTime"
@@ -102,34 +95,33 @@
         android:backgroundTint="#DADADA"
         android:text="End Time: "
         android:textColor="@color/olive"
-        app:layout_constraintEnd_toEndOf="@+id/number_of_vehicle"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/number_of_vehicle"
+        app:layout_constraintEnd_toEndOf="@+id/startBtnTime"
+        app:layout_constraintStart_toStartOf="@+id/startBtnTime"
         app:layout_constraintTop_toBottomOf="@+id/startBtnTime" />
-
-    <TextView
-        android:id="@+id/textView13"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:background="@drawable/boarder"
-        android:padding="10dp"
-        android:text="Hourly Rate (min 3 hr) : 4.16 taka/hour \n7 Days : 3.47 taka/hour\n1 Month : 3.19 taka/hour"
-        android:textAlignment="center"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="@+id/EndBtnTime"
-        app:layout_constraintStart_toStartOf="@+id/EndBtnTime"
-        app:layout_constraintTop_toBottomOf="@+id/EndBtnTime" />
 
     <Button
         android:id="@+id/button7"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="32dp"
         android:text="Continue"
-        app:layout_constraintEnd_toEndOf="@+id/textView13"
-        app:layout_constraintStart_toStartOf="@+id/textView13"
-        app:layout_constraintTop_toBottomOf="@+id/textView13" />
+        app:layout_constraintEnd_toEndOf="@+id/EndBtnTime"
+        app:layout_constraintStart_toStartOf="@+id/EndBtnTime"
+        app:layout_constraintTop_toBottomOf="@+id/EndBtnTime" />
+
+    <TextView
+        android:id="@+id/textView13"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/boarder"
+        android:padding="10dp"
+        android:textColor="@color/olive"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="@+id/textInputLayout"
+        app:layout_constraintStart_toStartOf="@+id/textInputLayout"
+        app:layout_constraintTop_toBottomOf="@+id/cardView" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

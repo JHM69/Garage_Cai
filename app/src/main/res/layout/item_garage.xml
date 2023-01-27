@@ -1,20 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/back"
+    android:clickable="true"
+    android:focusable="true"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="8dp"
-    android:clickable="true"
-    android:focusable="true"
-    android:foreground="?selectableItemBackground"
     app:cardCornerRadius="8dp"
     app:layout_anchorGravity="center">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <TextView
             android:id="@+id/name_g"
@@ -42,35 +44,11 @@
             android:textColor="#2B2B2B"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/ratingBar"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="@+id/name_g"
             app:layout_constraintTop_toBottomOf="@+id/name_g"
             app:layout_constraintVertical_bias="0.0" />
 
-        <Button
-            android:id="@+id/book"
-            android:layout_width="88dp"
-            android:layout_height="50dp"
-            android:layout_marginTop="16dp"
-
-            android:layout_marginEnd="16dp"
-            android:text="BOOK"
-            android:textColor="#FFFFFF"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <RatingBar
-            android:id="@+id/ratingBar"
-            style="@style/Widget.AppCompat.RatingBar.Small"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@+id/book"
-            app:layout_constraintStart_toStartOf="@+id/book"
-            app:layout_constraintTop_toBottomOf="@+id/book" />
 
         <androidx.cardview.widget.CardView
             android:id="@+id/status_yes"

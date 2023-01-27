@@ -89,5 +89,5 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/cardView2"
-        app:srcCompat="@drawable/success" />
+        app:srcCompat="@drawable/suc" />
 </androidx.constraintlayout.widget.ConstraintLayout>

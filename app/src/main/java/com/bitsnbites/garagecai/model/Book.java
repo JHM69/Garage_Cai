@@ -16,7 +16,7 @@ public class Book implements Serializable {
     String userId, garageId;
 
 
-    int hourlyRate, number_of_vehicle;
+    int hourlyRate, number_of_vehicle = 0;
 
     long startTimestamp, endTimestamp;
 
@@ -102,6 +102,9 @@ public class Book implements Serializable {
     }
 
     public int getNumber_of_vehicle() {
+        if(vehicleType.equals("car")) return number_of_vehicle;
+        else if(vehicleType.equals("bike")) return number_of_vehicle*BIKE_PER_CAR;
+        else if(vehicleType.equals("bicycle")) return number_of_vehicle*BICYCLE_PER_CAR;
         return number_of_vehicle;
     }
 

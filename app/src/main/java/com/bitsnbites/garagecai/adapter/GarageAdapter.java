@@ -2,6 +2,7 @@ package com.bitsnbites.garagecai.adapter;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
@@ -11,6 +12,7 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bitsnbites.garagecai.Activity.BookingActivity;
@@ -21,10 +23,10 @@ import java.util.List;
 
 
 public class GarageAdapter extends RecyclerView.Adapter<GarageAdapter.ViewHolder> implements View.OnCreateContextMenuListener {
-    Activity context;
+    Context context;
     List<Garage> garageList;
 
-    public GarageAdapter(Activity context, List<Garage> t) {
+    public GarageAdapter(Context context, List<Garage> t) {
         this.context = context;
         this.garageList = t;
     }
@@ -51,12 +53,13 @@ public class GarageAdapter extends RecyclerView.Adapter<GarageAdapter.ViewHolder
     public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
         Garage garage = garageList.get(position);
         holder.name.setText(garage.getName());
-        holder.address.setText("Stock:"+ garage.getAddress());
+        holder.address.setText(garage.getAddress());
         holder.status_yes.setVisibility(garage.isAvailability()? View.VISIBLE:View.GONE);
         holder.status_no.setVisibility(!garage.isAvailability()? View.VISIBLE:View.GONE);
-        holder.rating.setRating((float) garage.getRating());
+        //holder.rating.setRating((float) garage.getRating());
         holder.itemView.setOnClickListener(view -> {
             Intent intent = new Intent(context, BookingActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             intent.putExtra("garage" , garage);
             context.startActivity(intent);
         });
@@ -74,16 +77,14 @@ public class GarageAdapter extends RecyclerView.Adapter<GarageAdapter.ViewHolder
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView name, address, status_yes, status_no;
-        RatingBar rating;
-
+        TextView name, address;
+        CardView status_yes, status_no;
         public ViewHolder(View itemView) {
             super(itemView);
             name = itemView.findViewById(R.id.name_g);
             address = itemView.findViewById(R.id.add_g);
             status_yes = itemView.findViewById(R.id.status_yes);
             status_no = itemView.findViewById(R.id.status_no);
-            rating = itemView.findViewById(R.id.ratingBar);
         }
     }
 

@@ -103,7 +103,7 @@ public class Garage  implements Serializable  {
     }
 
     public float getBike() {
-        return ( (float) numberOfSlots /4)*BIKE_PER_CAR;
+        return ( (float) numberOfSlots)*BIKE_PER_CAR;
     }
 
     public void setBike(int bike) {
@@ -111,7 +111,7 @@ public class Garage  implements Serializable  {
     }
 
     public float getBicycle() {
-        return ((float) numberOfSlots /4)*BICYCLE_PER_CAR;
+        return ((float) numberOfSlots)*BICYCLE_PER_CAR;
     }
 
     public void setBicycle(int bicycle) {

@@ -19,7 +19,6 @@
             android:noHistory="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -33,6 +32,10 @@
         <activity android:name=".Activity.Successfull" />
         <activity android:name=".Activity.PaymentActivity" />
         <activity android:name=".Activity.BookingActivity" />
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyAgddM3SuCy4Qiz0DjM6lE13C5P2rbY3RI" />
     </application>
 
 </manifest>
