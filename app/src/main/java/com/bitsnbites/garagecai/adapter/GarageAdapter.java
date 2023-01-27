@@ -57,7 +57,6 @@ public class GarageAdapter extends RecyclerView.Adapter<GarageAdapter.ViewHolder
         holder.rating.setRating((float) garage.getRating());
         holder.itemView.setOnClickListener(view -> {
             Intent intent = new Intent(context, BookingActivity.class);
-            intent.putExtra("garageId" , garage.getId());
             intent.putExtra("garage" , garage);
             context.startActivity(intent);
         });

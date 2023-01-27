@@ -47,12 +47,11 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-
-
         findViewById(R.id.leaser).setOnClickListener(v -> {
             Intent intent;
             try{
-                if(Objects.equals(user.getType(), "none") ||  !Objects.equals(user.getType(), "leaser")){
+                if(Objects.equals(user.getType(), "both"))  intent = new Intent(getApplicationContext(), AddGarage.class);
+                else if(Objects.equals(user.getType(), "none") ||  !Objects.equals(user.getType(), "leaser")){
                     intent = new Intent(getApplicationContext(), MiddleActivity.class).putExtra("type", "leaser");
                 }else{
                     intent = new Intent(getApplicationContext(), AddGarage.class);
@@ -67,7 +66,8 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.renter).setOnClickListener(v -> {
             Intent intent;
             try{
-                if(Objects.equals(user.getType(), "none") ||  !Objects.equals(user.getType(), "renter")){
+                if(Objects.equals(user.getType(), "both"))  intent = new Intent(getApplicationContext(), ShowMap.class);
+                else if(Objects.equals(user.getType(), "none") ||  !Objects.equals(user.getType(), "renter")){
                     intent = new Intent(getApplicationContext(), MiddleActivity.class).putExtra("type", "renter");
                 }else{
                     intent = new Intent(getApplicationContext(), ShowMap.class);
@@ -84,9 +84,11 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.allGarage).setOnClickListener(v -> {
             Intent intent;
             try{
-                if(Objects.equals(user.getType(), "none") ||  !Objects.equals(user.getType(), "leaser")){
+                if(Objects.equals(user.getType(), "both"))  intent = new Intent(getApplicationContext(), MyGarages.class);
+                else if(Objects.equals(user.getType(), "none") ||  !Objects.equals(user.getType(), "leaser")){
                     intent = new Intent(getApplicationContext(), MiddleActivity.class).putExtra("type", "renter");
-                }else{
+                }
+                else{
                     intent = new Intent(getApplicationContext(), MyGarages.class);
                 }
 
