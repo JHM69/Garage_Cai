@@ -1,4 +1,6 @@
-package com.bitsnbites.garagecai.Activity;
+
+
+        package com.bitsnbites.garagecai.Activity;
 
 
 import android.Manifest;
@@ -105,6 +107,8 @@ public class ShowMap extends AppCompatActivity implements RoutingListener, OnMap
     private static final int REQUEST_CODE_PERMISSION = 2;
     String mPermission = android.Manifest.permission.ACCESS_FINE_LOCATION;
 
+    Boolean s = true;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -116,60 +120,70 @@ public class ShowMap extends AppCompatActivity implements RoutingListener, OnMap
 
         RecyclerView rcv = parentView.findViewById(R.id.garages);
 
+        View show = findViewById(R.id.floatingActionButton);
+
+
         TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,100,getResources().getDisplayMetrics());
         bottomSheerDialog.show();
+
+        show.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                bottomSheerDialog.show();
+            }
+        });
 
 
 
         final GarageAdapter[] garageAdapter = {new GarageAdapter(ShowMap.this, garageList)};
         //userView.setAdapter(addressAdapter);
 
-            FirebaseFirestore.getInstance().collection("Garage").addSnapshotListener(new EventListener<QuerySnapshot>() {
-                        @Override
-                        public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-                            assert value != null;
-                            if (!value.isEmpty()) {
-                                List<DocumentSnapshot> list = value.getDocuments();
-                                try {
-                                    for (DocumentSnapshot d : list) {
-                                        Log.d("userGarage", "onCreate: " + d);
-                                        Garage g = d.toObject(Garage.class);
-
-                                        allAddresss.add(new LatLng(Objects.requireNonNull(g).getLatitude(), g.getLongitude()));
-                                        garageList.add(g);
-                                        garageAdapter[0] = new GarageAdapter(ShowMap.this, garageList);
-                                        garageAdapter[0].notifyDataSetChanged();
-                                    }
-
-
-
-                                    try {
-                                        Routing routing = new Routing.Builder()
-                                                .travelMode(Routing.TravelMode.DRIVING)
-                                                .withListener(ShowMap.this)
-                                                .waypoints(allAddresss)
-                                                .key("AIzaSyAgddM3SuCy4Qiz0DjM6lE13C5P2rbY3RI")
-                                                .build();
-
-                                        routing.execute();
-
-
-                                        GarageAdapter garageAdapter = new GarageAdapter(getApplicationContext(), garageList);
-                                        rcv.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-                                        rcv.setAdapter(garageAdapter);
-                                        garageAdapter.notifyDataSetChanged();
-
-
-                                    } catch (Exception d) {
-                                        Toast.makeText(getApplicationContext(), "Null", Toast.LENGTH_SHORT).show();
-                                    }
-                                } catch (Exception g) {
-                                    Log.d("frgre", "onCreate: + ni" + g);
-                                }
-
-                            }
+        FirebaseFirestore.getInstance().collection("Garage").addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                assert value != null;
+                if (!value.isEmpty()) {
+                    List<DocumentSnapshot> list = value.getDocuments();
+                    try {
+                        for (DocumentSnapshot d : list) {
+                            Log.d("userGarage", "onCreate: " + d);
+                            Garage g = d.toObject(Garage.class);
+                            allAddresss.add(new LatLng(Objects.requireNonNull(g).getLatitude(), g.getLongitude()));
+                            garageList.add(g);
+                            garageAdapter[0] = new GarageAdapter(ShowMap.this, garageList);
+                            garageAdapter[0].notifyDataSetChanged();
                         }
-                    });
+
+
+
+                        try {
+                            Routing routing = new Routing.Builder()
+                                    .travelMode(Routing.TravelMode.DRIVING)
+                                    .withListener(ShowMap.this)
+                                    .waypoints(allAddresss)
+                                    .key("AIzaSyCA8w6LtmgAe_wCZTrOhC67NvvAcri0ttI")
+                                    .build();
+
+                            routing.execute();
+
+
+                            GarageAdapter garageAdapter = new GarageAdapter(getApplicationContext(), garageList);
+                            rcv.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+                            rcv.setAdapter(garageAdapter);
+                            garageAdapter.notifyDataSetChanged();
+
+
+                        } catch (Exception d) {
+                            Log.d("frgre", "onEvent: "+ d);
+                            Toast.makeText(getApplicationContext(), "Null", Toast.LENGTH_SHORT).show();
+                        }
+                    } catch (Exception g) {
+                        Log.d("frgre", "onCreate: + ni" + g);
+                    }
+
+                }
+            }
+        });
 
 
 
@@ -184,7 +198,7 @@ public class ShowMap extends AppCompatActivity implements RoutingListener, OnMap
         }
 
 
-       // fetchLocation();
+        // fetchLocation();
 
     }
 

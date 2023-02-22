@@ -38,10 +38,10 @@ import dev.dayaonweb.incrementdecrementbutton.IncrementDecrementButton;
 
 public class AddGarage extends AppCompatActivity {
     Garage garage = new Garage();
-    Uri filesUri1 = Uri.fromFile(new File("//android_asset/temp.pdf"));;
-    Uri filesUri2 = Uri.fromFile(new File("//android_asset/temp.pdf"));;
-    Uri filesUri3 = Uri.fromFile(new File("//android_asset/temp.pdf"));;
-    Uri filesUri4 = Uri.fromFile(new File("//android_asset/temp.pdf"));;
+    Uri filesUri1 = Uri.fromFile(new File("//android_asset/temp.pdf"));
+    Uri filesUri2 = Uri.fromFile(new File("//android_asset/temp.pdf"));
+    Uri filesUri3 = Uri.fromFile(new File("//android_asset/temp.pdf"));
+    Uri filesUri4 = Uri.fromFile(new File("//android_asset/temp.pdf"));
 
     TextView file1, file2, file3, file4;
     Button selectFile1, selectFile2, selectFile3, selectFile4;
@@ -70,7 +70,7 @@ public class AddGarage extends AppCompatActivity {
         EditText seq = findViewById(R.id.seq_number);
         EditText hourlyRatee = findViewById(R.id.hourly_rate_amount);
 
-        Places.initialize(getApplicationContext(), "AIzaSyAgddM3SuCy4Qiz0DjM6lE13C5P2rbY3RI");
+        Places.initialize(getApplicationContext(), "AIzaSyCA8w6LtmgAe_wCZTrOhC67NvvAcri0ttI");
 
         IncrementDecrementButton vehicleNumber = findViewById(R.id.number_of_vehicle);
 
@@ -83,46 +83,49 @@ public class AddGarage extends AppCompatActivity {
             pg.setTitle("Adding ....");
             pg.show();
 
-                garage.setAvailability(true);
-                garage.setId(getRandomString());
-                garage.setVerified(false);
-                garage.setRating(3.5);
-                garage.setOwnerId(FirebaseAuth.getInstance().getUid());
-                garage.setSeq_number(seq.getText().toString().trim());
-                try{
-                    Log.d("absss", "onCreate: "+ hourlyRatee.getText().toString());
-                    String s = hourlyRatee.getText().toString();
-                    garage.setHourly_rate(Integer.parseInt(s));
+            garage.setAvailability(true);
+            garage.setId(getRandomString());
+            garage.setVerified(false);
+            garage.setRating(3.5);
+            garage.setOwnerId(FirebaseAuth.getInstance().getUid());
+            garage.setSeq_number(seq.getText().toString().trim());
+            try {
+                Log.d("absss", "onCreate: " + hourlyRatee.getText().toString());
+                String s = hourlyRatee.getText().toString();
+                garage.setHourly_rate(Integer.parseInt(s));
 
-                }catch (Exception e){
-                    garage.setHourly_rate(100);
-                }
+            } catch (Exception e) {
+                garage.setHourly_rate(100);
+            }
 
-                try{
-                    garage.setNumberOfSlots(Integer.parseInt(String.valueOf(vehicleNumber.getSceneString())));
-                }catch (Exception e){
-                    garage.setNumberOfSlots(5);
-                }
+            try {
+                garage.setNumberOfSlots(Integer.parseInt(String.valueOf(vehicleNumber.getSceneString())));
+            } catch (Exception e) {
+                garage.setNumberOfSlots(5);
+            }
 
 
-                if ( garage.getAddress() == null || garage.getNumberOfSlots() == 0) {
-                    Toast.makeText(AddGarage.this, "Error Garage Data", Toast.LENGTH_SHORT).show();
-                    pg.dismiss();
-                    return;
-                }
+            if (garage.getAddress() == null || garage.getNumberOfSlots() == 0) {
+                Toast.makeText(AddGarage.this, "Error Garage Data", Toast.LENGTH_SHORT).show();
+                pg.dismiss();
+                return;
+            }
 
-                if(filesUri1==null || filesUri2==null || filesUri3==null || filesUri4==null){
-                    Toast.makeText(AddGarage.this, "Files are empty", Toast.LENGTH_SHORT).show();
-                    pg.dismiss();
-                    return;
-                }
+            if (filesUri1 == null || filesUri2 == null || filesUri3 == null || filesUri4 == null) {
+                Toast.makeText(AddGarage.this, "Files are empty", Toast.LENGTH_SHORT).show();
+                pg.dismiss();
+                return;
+
+
+            }
+
+            Log.d(TAG, "onCreate: "+ "skdjswwdew" + garage.getName());
 
             FirebaseFirestore.getInstance().collection("Garage").document(garage.getId())
-                    .set(garage).addOnCompleteListener(task ->{
+                    .set(garage).addOnCompleteListener(task -> {
                         pg.dismiss();
                         Toast.makeText(AddGarage.this, "Added", Toast.LENGTH_SHORT).show();
-
-                    } );
+                    });
 
 //
 //                StorageReference ref = FirebaseStorage.getInstance().getReference();
@@ -148,8 +151,6 @@ public class AddGarage extends AppCompatActivity {
 //                        }).addOnSuccessListener(taskSnapshot -> {
 //
 //                        });
-
-
 
 
         });
@@ -188,8 +189,8 @@ public class AddGarage extends AppCompatActivity {
                             garage.setAddress(place.getAddress());
                             nameEt.setText(garage.getAddress());
 
-                            garage.setLatitude( (Objects.requireNonNull(place.getLatLng())).latitude);
-                            garage.setLongitude( place.getLatLng().longitude);
+                            garage.setLatitude((Objects.requireNonNull(place.getLatLng())).latitude);
+                            garage.setLongitude(place.getLatLng().longitude);
 
                             mAutoCompleteAdapter.clear();
 

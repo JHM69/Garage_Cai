@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -31,6 +32,7 @@ import java.util.Objects;
 
 public class MyGarages extends AppCompatActivity {
     List<Garage> garageList = new ArrayList<>();
+    @SuppressLint("NotifyDataSetChanged")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,27 +42,24 @@ public class MyGarages extends AppCompatActivity {
 
         userView = findViewById(R.id.rcv);
 
-        FirebaseFirestore.getInstance().collection("Garage").whereEqualTo("ownerId", uid).addSnapshotListener(new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-                assert value != null;
-                if (!value.isEmpty()) {
-                    List<DocumentSnapshot> list = value.getDocuments();
-                    try {
-                        for (DocumentSnapshot d : list) {
-                            Log.d("userGarage", "onCreate: " + d);
-                            Garage g = d.toObject(Garage.class);
-                            garageList.add(g);
-                        }
-                        GarageAdapter garageAdapter = new GarageAdapter(getApplicationContext(), garageList);
-                        userView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-                        userView.setAdapter(garageAdapter);
-                        garageAdapter.notifyDataSetChanged();
-                    } catch (Exception g) {
-                        Log.d("frgre", "onCreate: + ni" + g);
-                    }
+        FirebaseFirestore.getInstance().collection("Garage").whereEqualTo("ownerId", uid).addSnapshotListener((value, error) -> {
 
+            if (!value.isEmpty()) {
+                List<DocumentSnapshot> list = value.getDocuments();
+                try {
+                    for (DocumentSnapshot d : list) {
+                        Log.d("userGarage", "onCreate: " + d);
+                        Garage g = d.toObject(Garage.class);
+                        garageList.add(g);
+                    }
+                    GarageAdapter garageAdapter = new GarageAdapter(getApplicationContext(), garageList);
+                    userView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+                    userView.setAdapter(garageAdapter);
+                    garageAdapter.notifyDataSetChanged();
+                } catch (Exception g) {
+                    Log.d("frgre", "onCreate: + ni" + g);
                 }
+
             }
         });
 
